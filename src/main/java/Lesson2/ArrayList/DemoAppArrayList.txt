@@ -1,0 +1,37 @@
+РЕЗУЛЬТАТ (консоль):
+
+Создан пустой ArrayList:
+ArrayListImpl{arr=[null, null, null, null, null, null, null, null, null, null], size=0, capacity=10}
+
+Добавление 10 элементов:
+[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+
+Проверяем увеличение емкости ArrayList'а:
+ArrayListImpl{arr=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, null, null, null, null, null, null], size=10, capacity=16}
+
+Добавление 2 элементов (c индексом 2, потом 4):
+[0, 10, 100, 20, 200, 30, 40, 50, 60, 70, 80, 90]
+
+Замена значения 4 элемента списка (с индексом 3):
+[0, 10, 100, 1000, 200, 30, 40, 50, 60, 70, 80, 90]
+
+Удаление 4 элемента списка (с индексом 3):
+[0, 10, 100, 200, 30, 40, 50, 60, 70, 80, 90]
+
+Удаление элемента =30:
+[0, 10, 100, 200, 40, 50, 60, 70, 80, 90]
+
+Удаление последнего элемента:
+[0, 10, 100, 200, 40, 50, 60, 70, 80]
+
+Уменьшить емкость списка (capacity):
+ArrayListImpl{arr=[0, 10, 100, 200, 40, 50, 60, 70, 80, null, null, null, null, null, null, null], size=9, capacity=16}
+ArrayListImpl{arr=[0, 10, 100, 200, 40, 50, 60, 70, 80], size=9, capacity=9} <~~~ после 'выравнивания'
+
+Очистка списка:
+[]
+ArrayListImpl{arr=[null, null, null, null, null, null, null, null, null], size=0, capacity=9}
+ArrayListImpl{arr=[null, null, null, null, null, null, null, null, null, null], size=0, capacity=10}
+<~~~ после 'выравнивания' пустого массива, устанавливается начальная емкость
+
+Process finished with exit code 0
