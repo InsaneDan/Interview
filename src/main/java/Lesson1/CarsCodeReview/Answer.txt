@@ -8,7 +8,11 @@ interface Stopable {
     void stop();
 }
 
-abstract class Car {
+interface Openable {
+    void stop();
+}
+
+abstract class Car implements Openable {
     public Engine engine; // нарушен принцип инкапсуляции, сделать поле private (или protected), изменения через сеттер
                           // класс Engine не реализован
     private String color;
@@ -20,7 +24,8 @@ abstract class Car {
         System.out.println("Car starting");
     }
 
-    abstract void open();
+    // вынести в отдельный интерфейс (SOLID - Interface segregation principle)
+    // abstract void open();
 
     public Engine getEngine() {
         return engine;

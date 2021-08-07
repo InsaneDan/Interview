@@ -6,11 +6,11 @@ public class Person {
     private String country, address, phone;
     private int age;
 
-    public Person() {
+    private Person() {
 
     }
 
-    public Person(String firstName,
+    private Person(String firstName,
                   String lastName,
                   String middleName,
                   String country,

@@ -2,7 +2,7 @@ package Lesson1.CarsCodeReview;
 
 // не реализован класс Engine
 
-abstract class Car {
+abstract class Car implements Openable {
     public Engine engine;
     private String color;
     private String name;
@@ -11,8 +11,6 @@ abstract class Car {
     protected void start() {
         System.out.println("Car starting");
     }
-
-    abstract void open();
 
     public Engine getEngine() {
         return engine;
