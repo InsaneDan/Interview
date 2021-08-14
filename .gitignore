@@ -19,7 +19,7 @@ mvnw.*
 
 ### IntelliJ IDEA ###
 .idea
-/.idea/**
+.idea/**
 *.iws
 *.iml
 *.ipr
@@ -37,10 +37,8 @@ build/
 ### VS Code ###
 .vscode/
 
-.idea
 */out
 */target
-*.iml
 
 # Compiled class file
 *.class
