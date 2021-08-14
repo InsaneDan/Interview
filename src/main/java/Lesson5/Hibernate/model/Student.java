@@ -1,12 +1,16 @@
 package Lesson5.Hibernate.model;
 
 import lombok.Data;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "students")
 @Data
+@NamedQueries({
+        @NamedQuery(name = "countAll", query = "select count(s) from Student s"),
+        @NamedQuery(name = "findByName", query = "from Student s where s.name = :name"),
+        @NamedQuery(name = "deleteById", query = "delete from Student s where s.id = :id")
+})
 public class Student {
 
     @Id

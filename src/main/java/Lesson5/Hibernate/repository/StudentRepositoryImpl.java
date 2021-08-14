@@ -4,20 +4,13 @@ import Lesson5.Hibernate.model.Student;
 import org.hibernate.Session;
 
 import java.util.List;
-import java.util.Optional;
 
 public class StudentRepositoryImpl implements StudentRepository {
 
     private Session session;
 
-    @Override
-    public void setSession(Session session) {
+    public StudentRepositoryImpl(Session session) {
         this.session = session;
-    }
-
-    @Override
-    public Student find(Student entity) {
-        return null;
     }
 
     @Override
@@ -27,7 +20,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public List<Student> findAll() {
-        return null;
+        return session.createQuery("from Student").list();
     }
 
     @Override
@@ -43,49 +36,33 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public void delete(Student entity) {
-
-    }
-
-    @Override
-    public void deleteById(Long aLong) {
-
-    }
-
-    @Override
-    public Long countAll() {
-        return null;
-    }
-
-
-
-
-
-
-
-
-    @Override
-    public Student find(Student entity) {
-        return null;
-    }
-
-
-
-
-
-
-
-    @Override
-    public List<Student> findAll() {
-        return (List<Student>) session.createQuery("from Student").list();
+        deleteById(entity.getId());
     }
 
     @Override
     public void deleteById(Long id) {
-        session.createQuery("delete from Student s where s.id = :id").setLong("id", id).executeUpdate();
+        session.getNamedQuery("deleteById")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
+
+    @Override
+    public void removeAll() {
+        session.createQuery("delete from Student").executeUpdate();
     }
 
     @Override
     public Long countAll() {
-        return (Long) session.createQuery("select count(s) from Student s").uniqueResult();
+        return (Long) session
+                .getNamedQuery("countAll")
+                .uniqueResult();
     }
+
+    @Override
+    public List<Student> findByName(String name) {
+        return session.getNamedQuery("findByName")
+                .setParameter("name", name)
+                .list();
+    }
+
 }
