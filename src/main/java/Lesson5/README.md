@@ -12,20 +12,20 @@
 7. Проверить работоспособность приложения, выполнить методы по удалению, изменению, добавлению записей, а также выборки одной и всех записей.
 
 
-   **Решение (Hybernate package)**  
-1. В MySQL предварительно создана схема 'interview_hibernate_demo'. 
+**Решение (Hybernate package)**
+1. В MySQL предварительно создана схема 'interview_hibernate_demo'.
    Таблица Students создается, если еще не создана, или обновляется с помощью Flyway.
 2. Сущность Student: аннотация @Entity, аннотация @Table, конструктор по умолчанию,
    поле @Id, автозаполнение @GeneratedValue(strategy = GenerationType.IDENTITY) + AUTO_INCREMENT в скрипте создания таблицы.
-3. В hibernate.cfg.xml указаны свойства для подключения к БД (драйвер – com.mysql.cj.jdbc.Driver, url – jdbc:mysql://localhost/interview_hibernate_demo и др.), 
+3. В hibernate.cfg.xml указаны свойства для подключения к БД (драйвер – com.mysql.cj.jdbc.Driver, url – jdbc:mysql://localhost/interview_hibernate_demo и др.),
    класс-сущность (mapping class) – "Lesson5.Hibernate.model.Student".
 4. Класс HibernateUtil содержит метод public static SessionFactory getSessionFactory, который возвращает SessionFactory.
-5. DAO-слой: базовый интерфейс StudentRepository extends BaseRepository<Student, Long>, реализация – StudentRepositoryImpl. 
-   При создании объекта в конструкторе передается текущая сессия (session).
-6. Добавление записей в БД и остальные операции вынесены в отдельный сервисный слой (StudentService).
+5. DAO-слой: базовый интерфейс StudentRepository extends BaseRepository<Student, Long>, реализация – StudentRepositoryImpl.
+   При создании объекта в конструкторе передается фабрика (SessionFactory), в каждом методе создается текущая сессия,
+   открывается транзакция, выполняется основное действие, закрывается транзакция и сессия. В связи с этим пакетные операции.
+   требующие выполнения нескольких действий с базой данных в рамках одной транзакции, вынесены в отдельные методы
+   (например, метод mergeBatch).
+6. Основная логика приложения (обновление записей в БД и др. операции) вынесена в отдельный сервисный слой (StudentService).
 7. Точка входа – DemoAppHibernate: запускается метод Tests().start(), который проверяет все методы сервисного слоя.
-   
-
-Для упрощения все тесты проводятся в рамках **_одной транзакции_**!!!
 
 </details>

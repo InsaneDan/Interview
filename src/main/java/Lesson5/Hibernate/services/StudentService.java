@@ -2,7 +2,10 @@ package Lesson5.Hibernate.services;
 
 import Lesson5.Hibernate.model.Student;
 import Lesson5.Hibernate.repository.StudentRepository;
+import Lesson5.Hibernate.utils.HibernateUtil;
 import com.mysql.cj.jdbc.exceptions.OperationNotSupportedException;
+import org.hibernate.Hibernate;
+import org.hibernate.SessionFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +13,12 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final SessionFactory factory;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, SessionFactory factory) {
         this.studentRepository = studentRepository;
+        this.factory = factory;
     }
-
-//    public StudentRepository getStudentRepository() {
-//        return studentRepository;
-//    }
 
     public void printTotalCount() {
         System.out.println("Количество записей в БД: " + studentRepository.countAll());
@@ -36,13 +37,9 @@ public class StudentService {
         studentRepository.findAll().forEach(System.out::println);
     }
 
-    public void addStudents(int amount) {
-        System.out.println("Добавление новых записей: " + amount);
-        for (int i = 1; i <= amount; i++) {
-            studentRepository.save(
-                    new Student("Student_" + "0".repeat(4 - Integer.toString(i).length()) + i, (int) (Math.random() * 10))
-            );
-        }
+    public void addStudents(List<Student> studentsList) {
+        System.out.println("Добавление новых записей: " + studentsList.size());
+        studentRepository.mergeBatch(studentsList);
     }
 
     public void removeAllStudents() {
@@ -60,7 +57,7 @@ public class StudentService {
         Student student = studentRepository.findById(id);
         if (student != null) {
             student.setName(newName);
-            studentRepository.update(student);
+            studentRepository.merge(student);
             return student;
         }
         return null;

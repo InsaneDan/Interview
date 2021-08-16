@@ -1,68 +1,118 @@
 package Lesson5.Hibernate.repository;
 
 import Lesson5.Hibernate.model.Student;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public class StudentRepositoryImpl implements StudentRepository {
 
-    private Session session;
+    private SessionFactory factory;
 
-    public StudentRepositoryImpl(Session session) {
-        this.session = session;
+    public StudentRepositoryImpl(SessionFactory factory) {
+        this.factory = factory;
     }
 
     @Override
     public Student findById(Long id) {
-        return session.get(Student.class, id);
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            Student student = session.get(Student.class, id);
+            session.getTransaction().commit();
+            return student;
+        }
     }
 
     @Override
     public List<Student> findAll() {
-        return session.createQuery("from Student").list();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            List<Student> studentsList = session.createQuery("from Student").list();
+            session.getTransaction().commit();
+            return studentsList;
+        }
     }
 
     @Override
-    public Student save(Student entity) {
-        session.persist(entity);
-        return entity;
+    public Student merge(Student entity) {
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            Student student = (Student) session.merge(entity);
+            session.getTransaction().commit();
+            return student;
+        }
     }
 
     @Override
-    public Student update(Student entity) {
-        return (Student) session.merge(entity);
+    public List<Student> mergeBatch(List<Student> entities) {
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            for (Student entity : entities) {
+                Student mergedEntity = (Student) session.merge(entity);
+                entity = mergedEntity;
+            }
+            session.getTransaction().commit();
+            return entities;
+        }
     }
 
     @Override
-    public void delete(Student entity) {
-        deleteById(entity.getId());
+    public boolean delete(Student entity) {
+        return deleteById(entity.getId());
     }
 
     @Override
-    public void deleteById(Long id) {
-        session.getNamedQuery("deleteById")
-                .setParameter("id", id)
-                .executeUpdate();
+    public boolean deleteById(Long id) {
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            session.getNamedQuery("deleteById")
+                    .setParameter("id", id)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            return true;
+        } catch (HibernateException he) {
+            he.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public void removeAll() {
-        session.createQuery("delete from Student").executeUpdate();
+    public boolean removeAll() {
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            session.createQuery("delete from Student").executeUpdate();
+            session.getTransaction().commit();
+            return true;
+        } catch (HibernateException he) {
+            he.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public Long countAll() {
-        return (Long) session
-                .getNamedQuery("countAll")
-                .uniqueResult();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            Long countResult = (Long) session
+                    .getNamedQuery("countAll")
+                    .uniqueResult();
+            session.getTransaction().commit();
+            return countResult;
+        }
     }
 
     @Override
     public List<Student> findByName(String name) {
-        return session.getNamedQuery("findByName")
-                .setParameter("name", name)
-                .list();
+        try (Session session = factory.getCurrentSession()) {
+            session.beginTransaction();
+            List<Student> studentsList = session.getNamedQuery("findByName")
+                    .setParameter("name", name)
+                    .list();
+            session.getTransaction().commit();
+            return studentsList;
+        }
     }
 
 }

@@ -5,35 +5,43 @@ import Lesson5.Hibernate.repository.StudentRepository;
 import Lesson5.Hibernate.repository.StudentRepositoryImpl;
 import Lesson5.Hibernate.services.StudentService;
 import Lesson5.Hibernate.utils.HibernateUtil;
-import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Tests {
 
     private StudentService studentService;
-    private Session session;
 
     public Tests() {
-        this.session = HibernateUtil
-                .getSessionFactory()
-                .openSession();
-        StudentRepository studentRepository = new StudentRepositoryImpl(session);
-        studentService = new StudentService(studentRepository);
+        SessionFactory factory = HibernateUtil.getSessionFactory();
+        StudentRepository studentRepository = new StudentRepositoryImpl(factory);
+        studentService = new StudentService(studentRepository, factory);
     }
 
     public void start() {
-        System.out.println("\nНачать транзакцию...");
-        session.beginTransaction();
 
         studentService.printTotalCount();
-        studentService.addStudents(1000);
+        System.out.println("\nСоздаем список из 1000 студентов и добавляем в БД...");
+        List<Student> students = new ArrayList<>();
+
+        for (int i = 1; i <= 1000; i++) {
+            students.add(new Student("Student_" + "0".repeat(4 - Integer.toString(i).length()) + i, (int) (Math.random() * 10)));
+        }
+        studentService.addStudents(students);
+
         studentService.printTotalCount();
         studentService.removeAllStudents();
         studentService.printTotalCount();
         System.out.println();
 
-        studentService.addStudents(10);
+        System.out.println("Создаем новый список из 10 студентов и добавляем в БД...");
+        List<Student> studentsShort = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            studentsShort.add(new Student("Student_" + "0".repeat(4 - Integer.toString(i).length()) + i, (int) (Math.random() * 10)));
+        }
+        studentService.addStudents(studentsShort);
         studentService.printAllStudents();
         studentService.printTotalCount();
         System.out.println();
@@ -61,10 +69,7 @@ public class Tests {
 
         System.out.println("Удалить все записи из таблицы...");
         studentService.removeAllStudents();
-        System.out.println("Завершить транзакцию...");
-        session.getTransaction().commit();
-        System.out.println("Закрыть сессию...");
-        session.close();
+
         System.out.println("Закрыть фабрику HibernateUtil...");
         HibernateUtil.shutdown();
     }
