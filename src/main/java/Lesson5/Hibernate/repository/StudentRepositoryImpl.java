@@ -49,10 +49,11 @@ public class StudentRepositoryImpl implements StudentRepository {
     public List<Student> mergeBatch(List<Student> entities) {
         try (Session session = factory.getCurrentSession()) {
             session.beginTransaction();
-            for (Student entity : entities) {
-                Student mergedEntity = (Student) session.merge(entity);
-                entity = mergedEntity;
-            }
+            entities.forEach(session::merge);
+//            for (Student entity : entities) {
+//                Student mergedEntity = (Student) session.merge(entity);
+//                entity = mergedEntity;
+//            }
             session.getTransaction().commit();
             return entities;
         }
